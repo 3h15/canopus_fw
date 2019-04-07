@@ -33,6 +33,8 @@ defmodule Canopus.Thermostat do
     # Update with data from disk
     state = read_data_from_disk(state)
 
+    state = adjust_heating(state)
+
     {:ok, state}
   end
 
