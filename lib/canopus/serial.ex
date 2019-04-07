@@ -8,7 +8,6 @@ defmodule Canopus.Serial do
   end
 
   def init(_) do
-    Logger.metadata(service: :serial)
 
     {:ok, pid} = Circuits.UART.start_link
     Circuits.UART.open(pid, "ttyAMA0",
@@ -18,24 +17,24 @@ defmodule Canopus.Serial do
       rx_framing_timeout: 500
     )
 
-    Logger.info("Serial port open.");
+    Logger.info("SERIAL: Port open.");
     {:ok, []}
   end
 
   # The bluetooth receiver sends "START" at begining.
   def handle_info({:circuits_uart, "ttyAMA0", "START"}, state) do
-    Logger.info("Serial communication established.")
+    Logger.info("SERIAL: communication established.")
     {:noreply, state}
   end
 
   # The receiver send data for each sensor temp received.
   def handle_info({:circuits_uart, "ttyAMA0", data}, state) when is_binary(data) do
-    Logger.info("Received: #{data}")
+    Logger.info("SERIAL: Received: #{data}")
     [sensor_id, temperature, _humidity, validity] = String.split(data, "|")
     if validity == "1" do
       GenServer.call Canopus.Thermostat, {:update_sensor, sensor_id, temperature}
     else
-      Logger.info("Ignored corrupted data.")
+      Logger.info("SERIAL: Ignored corrupted data.")
     end
     {:noreply, state}
   end
@@ -43,8 +42,8 @@ defmodule Canopus.Serial do
   # IF something goes wrong, we could receive {:partial, data} messages.
   # Logging these ensures I won't be debugging for days in a couple of years.
   def handle_info({:circuits_uart, "ttyAMA0", {token, data}}, state) when is_binary(data) do
-    Logger.info("Received: #{token}")
-    Logger.info("Received: #{data}")
+    Logger.info("SERIAL: Received #{token}")
+    Logger.info("SERIAL: Received #{data}")
     {:noreply, state}
   end
 

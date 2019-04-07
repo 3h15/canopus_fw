@@ -38,22 +38,21 @@ defmodule Canopus.I2c do
   end
 
   def init(_) do
-    # Logger.metadata(service: :i2c)
 
     # Connect i2c
     {:ok, bus} = Circuits.I2C.open(@bus_name)
-    Logger.info("I2C started.")
+    Logger.info("I2C: Started.")
 
     # Set all pins to output
     Circuits.I2C.write(bus, @ic_1, <<@io_dir_a, 0x00>>)
     Circuits.I2C.write(bus, @ic_1, <<@io_dir_b, 0x00>>)
     Circuits.I2C.write(bus, @ic_2, <<@io_dir_a, 0x00>>)
     Circuits.I2C.write(bus, @ic_2, <<@io_dir_b, 0x00>>)
-    Logger.info("All pins to OUTPUT.")
+    Logger.info("I2C: All pins to OUTPUT.")
 
     # Set all pins to 0
+    Logger.info("I2C: All pins to 0.")
     write({bus, 0})
-    Logger.info("All pins to 0.")
 
     {:ok, {bus, 0}}
   end
@@ -69,6 +68,7 @@ defmodule Canopus.I2c do
     # Add start address in front of data (first byte sent is start address)
     data = <<0>> <> data
     Circuits.I2C.write(bus, @clock, data)
+    Logger.info("I2C: Clock was set.")
     {:reply, nil, {bus, state}}
   end
 
@@ -95,7 +95,7 @@ defmodule Canopus.I2c do
     Circuits.I2C.write(bus, @ic_2, <<@gpio_a, byte_3>>)
     Circuits.I2C.write(bus, @ic_2, <<@gpio_b, byte_4>>)
     log = data |> Integer.to_string(2) |> String.pad_leading(32, "0")
-    Logger.info("Written #{log}")
+    Logger.info("I2C: Written #{log}")
   end
 
 end

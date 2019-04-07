@@ -11,7 +11,6 @@ defmodule Canopus.Thermostat do
   end
 
   def init(_) do
-    Logger.metadata(service: :thermostat)
     # Room structure
     room = %{
       temperature: 0.0,
@@ -185,10 +184,10 @@ defmodule Canopus.Thermostat do
   defp read_data_from_disk state do
     with {:ok, json} <- File.read(@persist),
          {:ok, persisted_state} <- Poison.decode(json) do
-      Logger.info('Loaded persisted state.')
+      Logger.info('THERMOSTAT: Loaded persisted state.')
       read_persisted_state(state, persisted_state)
     else
-      _ -> Logger.info('Unable to load persisted state.')
+      _ -> Logger.info('THERMOSTAT: Unable to load persisted state.')
         state
     end
   end
@@ -226,7 +225,7 @@ defmodule Canopus.Thermostat do
   defp persist state do
     state = Poison.encode!( state )
     File.write!(@persist, state)
-    Logger.info('Saved state.')
+    Logger.info('THERMOSTAT: Saved state.')
   end
 
 end
