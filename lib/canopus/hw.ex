@@ -11,6 +11,20 @@ defmodule Canopus.HW do
   #               15 || 31 -> RDC Grand salon N & S, non branché parce qu'il n'y a pas d'electrovanne pour l'instant
   #     Heater <- 16 || 32 -> RDC Cuisine
 
+  # Mapping of sensors references and atoms
+  @sensor_ids %{
+    "A" => :a,
+    "B" => :b,
+    "C" => :c,
+    "D" => :d,
+    "E" => :e,
+    "F" => :f,
+    "G" => :g,
+    "H" => :h,
+    "I" => :i,
+    "J" => :j,
+    "K" => :k,
+  }
 
   # Structure of hardware. Order is important
 
@@ -74,12 +88,18 @@ defmodule Canopus.HW do
     },
 
   ]
+  # Function to convert from sensor references received from other systems (serial, web...) which are simple letters to sensor id which are atoms
+  # We can't use String.to_atom/1 because it could create arbitrary atoms because of a bug in an external system.
+  # We can't use String.to_existing_atom/1 because sensor_id atoms are not pre-created because of some compilation bug.
+
+  def sensor_id(sensor_ref) when is_binary(sensor_ref) do
+    @sensor_ids[String.upcase(sensor_ref)]
+  end
 
   def get_all, do: @rooms
 
-  def get_by_sensor_id(sensor_id) when is_binary(sensor_id) do
-    sensor_id = sensor_id |> String.downcase |> String.to_existing_atom
-    get_by_sensor_id(sensor_id)
+  def get_by_sensor_id(sensor_ref) when is_binary(sensor_ref) do
+    sensor_ref |> sensor_id |> get_by_sensor_id
   end
 
   def get_by_sensor_id(sensor_id) when is_atom(sensor_id) do

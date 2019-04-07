@@ -37,9 +37,9 @@ defmodule Canopus.Thermostat do
     {:ok, state}
   end
 
-  def handle_call( {:set_target_temperature, sensor_id, target_temperature}, _from, state ) do
+  def handle_call( {:set_target_temperature, sensor_ref, target_temperature}, _from, state ) do
     # Get atom from sensor id binary
-    sensor_id = sensor_id |> String.downcase |> String.to_existing_atom
+    sensor_id = Canopus.HW.sensor_id(sensor_ref)
 
     # Get room's map and update it
     room = state.rooms[sensor_id]
@@ -71,9 +71,9 @@ defmodule Canopus.Thermostat do
     {:reply, value, state}
   end
 
-  def handle_call( {:update_sensor, sensor_id, temperature}, _from, state ) do
+  def handle_call( {:update_sensor, sensor_ref, temperature}, _from, state ) do
     # Get atom from sensor id binary
-    sensor_id = sensor_id |> String.downcase |> String.to_existing_atom
+    sensor_id = Canopus.HW.sensor_id(sensor_ref)
     # Get corresponding room map
     room = state.rooms[sensor_id]
 
