@@ -3,7 +3,7 @@ defmodule Canopus.Heater do
   @persist "/root/heater.json"
 
   @heater_pin 16
-  
+
   use GenServer
   require Logger
 
@@ -11,9 +11,8 @@ defmodule Canopus.Heater do
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
-  
+
   def init(_) do
-    Logger.metadata(service: :heater)
     # Heater structure
     state = %{
       is_on: "off",
@@ -21,16 +20,16 @@ defmodule Canopus.Heater do
 
     # Update with data from disk
     state = read_data_from_disk(state)
-    
+
     update_heater( state )
-    
+
     {:ok, state}
   end
 
   def handle_call( :get_heater, _from, state ) do
     {:reply, state, state}
   end
-  
+
   def handle_call( {:set_heater, on}, _from, state ) when on in ["on", "off"] do
 
     # Change state
@@ -55,10 +54,10 @@ defmodule Canopus.Heater do
   defp read_data_from_disk state do
     with {:ok, json} <- File.read(@persist),
          {:ok, persisted_state} <- Poison.decode(json) do
-      Logger.info('Loaded persisted state.')
+      Logger.info('HEATER: Loaded persisted state.')
       read_persisted_state(state, persisted_state)
     else
-      _ -> Logger.info('Unable to load persisted state.')
+      _ -> Logger.info('HEATER: Unable to load persisted state.')
         state
     end
   end
@@ -79,7 +78,7 @@ defmodule Canopus.Heater do
   defp persist state do
     state = Poison.encode!( state )
     File.write!(@persist, state)
-    Logger.info('Saved state.')
+    Logger.info('HEATER: Saved state.')
   end
-  
+
 end
