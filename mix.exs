@@ -43,7 +43,7 @@ defmodule Canopus.MixProject do
       # Canopus specific deps
       {:nerves_time, "~> 0.2"},
       {:circuits_uart, "~> 1.3"},
-      {:elixir_ale, "~> 1.2"},
+      {:circuits_i2c, "~> 0.3"},
       {:timex, "~> 3.5"},
       {:poison, "~> 4.0"},
 
