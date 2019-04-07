@@ -8,6 +8,7 @@ To build and install canopus on the rpi3:
   * `export NERVES_NETWORK_PSK=secret`
   * `export MIX_TARGET=rpi3`
   * Install dependencies with `mix deps.get`
+  * Build with `mix firmware`
   * Burn to an SD card with `mix firmware.burn`
   * Upgrade firmware via SSH with `mix firmware.push 192.168.1.68`
   * Or use `./upload.sh` (Because firmware.push is broken for now)
