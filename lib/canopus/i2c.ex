@@ -76,10 +76,12 @@ defmodule Canopus.I2c do
   def handle_call( %{pin: pin_number, to: value}, _from, {bus, data} ) do
     pin = 1 <<< (pin_number - 1)
 
-    data = merge(data, pin, value)
-    write({bus, data})
+    new_data = merge(data, pin, value)
+    if(new_data != data) do
+      write({bus, new_data})
+    end
 
-    {:reply, data, {bus, data}}
+    {:reply, new_data, {bus, new_data}}
   end
 
   defp merge(data, pin, :on), do: data ||| pin
